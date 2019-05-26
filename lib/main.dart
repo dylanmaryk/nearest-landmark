@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:nearest_landmark/model/landmarks_response.dart';
 import 'package:nearest_landmark/networking/landmarks_api_provider.dart';
+
+import 'model/landmark.dart';
 
 void main() => runApp(new NearestLandmarkApp());
 
@@ -8,19 +11,13 @@ class NearestLandmarkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'NearestLandmark',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: new NearestLandmarkHomePage(title: 'NearestLandmark'),
+      home: new NearestLandmarkHomePage(),
     );
   }
 }
 
 class NearestLandmarkHomePage extends StatefulWidget {
-  NearestLandmarkHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  NearestLandmarkHomePage({Key key}) : super(key: key);
 
   @override
   _NearestLandmarkHomePageState createState() =>
@@ -37,7 +34,7 @@ class _NearestLandmarkHomePageState extends State<NearestLandmarkHomePage> {
           if (snapshot.data.error != null && snapshot.data.error.length > 0) {
             return buildErrorWidget(snapshot.data.error);
           }
-          return buildUserWidget(snapshot.data);
+          return buildLandmarkWidget(snapshot.data.landmarks);
         } else if (snapshot.hasError) {
           return buildErrorWidget(snapshot.error);
         } else {
@@ -49,29 +46,38 @@ class _NearestLandmarkHomePageState extends State<NearestLandmarkHomePage> {
 
   Widget buildLoadingWidget() {
     return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text("Loading data from API..."), CircularProgressIndicator()],
-    ));
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Loading data from API..."),
+          CircularProgressIndicator(),
+        ],
+      ),
+    );
   }
 
   Widget buildErrorWidget(String error) {
     return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text("Error occured: $error"),
-      ],
-    ));
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Error occured: $error"),
+        ],
+      ),
+    );
   }
 
-  Widget buildUserWidget(LandmarksReponse data) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text("landmarks response widget"),
-      ],
-    ));
+  Widget buildLandmarkWidget(List<Landmark> landmarks) {
+    return Swiper(
+      itemBuilder: (BuildContext context, int index) {
+        return new Image.network(
+          landmarks[index].images.first.src,
+          fit: BoxFit.fitHeight,
+        );
+      },
+      itemCount: landmarks.length,
+      loop: false,
+      pagination: SwiperPagination(),
+    );
   }
 }
