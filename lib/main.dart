@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nearest_landmark/model/landmarks_response.dart';
+import 'package:nearest_landmark/networking/landmarks_api_provider.dart';
 
 void main() => runApp(new NearestLandmarkApp());
 
@@ -21,16 +23,55 @@ class NearestLandmarkHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _NearestLandmarkHomePageState createState() => new _NearestLandmarkHomePageState();
+  _NearestLandmarkHomePageState createState() =>
+      new _NearestLandmarkHomePageState();
 }
 
 class _NearestLandmarkHomePageState extends State<NearestLandmarkHomePage> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
+    return StreamBuilder<LandmarksReponse>(
+      stream: LandmarksApiProvider().getLandmarks().asStream(),
+      builder: (context, AsyncSnapshot<LandmarksReponse> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data.error != null && snapshot.data.error.length > 0) {
+            return buildErrorWidget(snapshot.data.error);
+          }
+          return buildUserWidget(snapshot.data);
+        } else if (snapshot.hasError) {
+          return buildErrorWidget(snapshot.error);
+        } else {
+          return buildLoadingWidget();
+        }
+      },
     );
+  }
+
+  Widget buildLoadingWidget() {
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Text("Loading data from API..."), CircularProgressIndicator()],
+    ));
+  }
+
+  Widget buildErrorWidget(String error) {
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Error occured: $error"),
+      ],
+    ));
+  }
+
+  Widget buildUserWidget(LandmarksReponse data) {
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("landmarks response widget"),
+      ],
+    ));
   }
 }
