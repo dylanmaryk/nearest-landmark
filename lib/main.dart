@@ -70,9 +70,36 @@ class _NearestLandmarkHomePageState extends State<NearestLandmarkHomePage> {
   Widget buildLandmarkWidget(List<Landmark> landmarks) {
     return Swiper(
       itemBuilder: (BuildContext context, int index) {
-        return new Image.network(
-          landmarks[index].images.first.src,
-          fit: BoxFit.fitHeight,
+        return Stack(
+          children: <Widget>[
+            Image.network(
+              landmarks[index].images.first.src,
+              fit: BoxFit.fitHeight,
+            ),
+            Positioned(
+              child: Container(
+                child: Row(
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.all(10)),
+                    Flexible(
+                      child: Column(
+                        children: <Widget>[
+                          Text(landmarks[index].title),
+                          Padding(padding: EdgeInsets.all(50)),
+                        ],
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.all(10)),
+                  ],
+                ),
+                color: Colors.white,
+              ),
+              bottom: 0,
+              left: 0,
+              right: 0,
+            ),
+          ],
+          fit: StackFit.expand,
         );
       },
       itemCount: landmarks.length,
