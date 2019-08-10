@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:nearest_landmark/interactor/landmarks_interactor.dart';
 import 'package:nearest_landmark/model/landmarks_response.dart';
-import 'package:nearest_landmark/networking/landmarks_api_provider.dart';
 
 import 'model/landmark.dart';
 
@@ -28,7 +28,7 @@ class _NearestLandmarkHomePageState extends State<NearestLandmarkHomePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<LandmarksReponse>(
-      stream: LandmarksApiProvider().getLandmarks().asStream(),
+      stream: LandmarksInteractor().getLandmarks().asStream(),
       builder: (context, AsyncSnapshot<LandmarksReponse> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data.error != null && snapshot.data.error.length > 0) {
