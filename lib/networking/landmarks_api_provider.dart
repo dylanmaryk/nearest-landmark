@@ -6,7 +6,7 @@ class LandmarksApiProvider {
 
   Future<LandmarksReponse> getLandmarks(double lat, double lng) async {
     try {
-      String endpoint = "https://nearest-landmark.v2.vapor.cloud/landmarks?lat=$lat&lng=$lng";
+      String endpoint = "https://nearest-landmark.herokuapp.com/landmarks?lat=$lat&lng=$lng";
       Response response = await dio.get(endpoint);
       return LandmarksReponse.fromJson(response.data);
     } catch (error, stacktrace) {
